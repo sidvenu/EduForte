@@ -1,4 +1,4 @@
-package com.example.eduforte
+package io.github.eduforte.eduforte
 
 import android.os.Bundle
 import io.flutter.app.FlutterActivity

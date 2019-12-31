@@ -11,7 +11,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.red,
       ),
-      home: LoginRoute(title: 'EduForte - Login'),
+      home: LoginRoute(title: 'EduForte'),
     );
   }
 }

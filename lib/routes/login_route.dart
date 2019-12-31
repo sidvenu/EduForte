@@ -14,7 +14,7 @@ class LoginRoute extends StatefulWidget {
 
 class _LoginRouteState extends State<LoginRoute> {
   String phoneNumber = '';
-  String errorText = null;
+  String errorText;
 
   MaskedTextController getPhoneNumberController() {
     final translator = MaskedTextController.getDefaultTranslator();

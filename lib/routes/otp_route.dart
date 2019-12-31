@@ -1,4 +1,3 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:pin_code_text_field/pin_code_text_field.dart';
@@ -65,7 +64,8 @@ class _OTPRouteState extends State<OTPRoute> {
 
   @override
   Widget build(BuildContext context) {
-    automaticOTPVerificationProgress = ProgressDialog(context, isDismissible: false);
+    automaticOTPVerificationProgress =
+        ProgressDialog(context, isDismissible: false);
     checkEnteredOTPProgress = ProgressDialog(context, isDismissible: false);
 
     automaticOTPVerificationProgress.style(
@@ -105,33 +105,47 @@ class _OTPRouteState extends State<OTPRoute> {
       backgroundColor: Colors.white,
     );
 
-    FocusNode focusNode = FocusNode();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      focusNode.requestFocus();
-    });
+    Size size = MediaQuery.of(context).size;
+    double ratio = size.height / size.width;
+    if (ratio < 1) ratio = 1 / ratio;
 
     return Scaffold(
-      backgroundColor: Colors.red,
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            Container(
-              child: PinCodeTextField(
-                focusNode: focusNode,
-                onTextChanged: (String otp) => this.otp = otp,
-                pinBoxBorderWidth: 0.00000000000001,
-                pinBoxColor: Colors.redAccent,
-                highlightColor: Colors.amber,
-                wrapAlignment: WrapAlignment.center,
-                pinTextStyle: TextStyle(
-                  fontSize: 30,
-                  color: Colors.white,
-                ),
-              ),
-              margin: EdgeInsets.only(top: 100),
+        child: Container(
+          decoration: BoxDecoration(
+            // Box decoration takes a gradient
+            gradient: RadialGradient(
+              // Where the linear gradient begins and ends
+              center: Alignment.topCenter,
+              radius: ratio,
+              // Add one stop for each color. Stops should increase from 0 to 1
+              stops: [0.1, 0.9],
+              colors: [
+                // Colors are easy thanks to Flutter's Colors class.
+                Colors.red[700],
+                Colors.red[600],
+              ],
             ),
-          ],
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Container(
+                child: PinCodeTextField(
+                  autofocus: true,
+                  onTextChanged: (String otp) => this.otp = otp,
+                  pinBoxBorderWidth: 0.00000000000001,
+                  pinBoxColor: Colors.red[600],
+                  wrapAlignment: WrapAlignment.center,
+                  pinTextStyle: TextStyle(
+                    fontSize: 30,
+                    color: Colors.white,
+                  ),
+                ),
+                margin: EdgeInsets.only(top: 100),
+              ),
+            ],
+          ),
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
