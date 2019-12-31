@@ -1,27 +1,20 @@
+import 'package:eduforte/routes/otp_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
 
-class LoginPage extends StatefulWidget {
-  LoginPage({Key key, this.title}) : super(key: key);
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
+class LoginRoute extends StatefulWidget {
   final String title;
 
+  LoginRoute({Key key, this.title}) : super(key: key);
+
   @override
-  _LoginPageState createState() => _LoginPageState();
+  _LoginRouteState createState() => _LoginRouteState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _LoginRouteState extends State<LoginRoute> {
   String phoneNumber = '';
+  String errorText = null;
 
   MaskedTextController getPhoneNumberController() {
     final translator = MaskedTextController.getDefaultTranslator();
@@ -47,12 +40,32 @@ class _LoginPageState extends State<LoginPage> {
   void onChangePhoneNumber(String phoneNumber) {
     setState(() {
       this.phoneNumber = phoneNumber;
+      this.errorText = null;
     });
   }
 
-  void onPressSendOTP() {
+  void setError(String errorText) {
+    setState(() {
+      this.errorText = errorText;
+    });
+  }
+
+  void goToOTPPage(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => OTPRoute(title: 'EduForte - Enter OTP')),
+    );
+  }
+
+  void onPressSendOTP(BuildContext context) {
     print(phoneNumber);
-    // TODO: use firebase to send OTP and move to the next screen
+    if (phoneNumber.replaceAll(" ", "").length != 10) {
+      setError("Please check your phone number again");
+    } else {
+      // TODO: use firebase to send OTP and move to the next screen
+      goToOTPPage(context);
+    }
   }
 
   @override
@@ -78,6 +91,7 @@ class _LoginPageState extends State<LoginPage> {
                   labelText: 'Phone Number',
                   prefixText: '+91 ',
                   prefixStyle: TextStyle(color: Colors.black, fontSize: 16),
+                  errorText: errorText,
                   counterText: '${phoneNumber.replaceAll(' ', '').length}/10',
                   hasFloatingPlaceholder: true,
                 ),
@@ -89,7 +103,7 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: onPressSendOTP,
+        onPressed: () => onPressSendOTP(context),
         icon: Icon(Icons.message),
         label: Text("Send OTP"),
       ),

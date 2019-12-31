@@ -1,4 +1,4 @@
-import 'package:eduforte/login_page.dart';
+import 'package:eduforte/routes/login_route.dart';
 import 'package:flutter/material.dart';
 
 void main() => runApp(MyApp());
@@ -11,7 +11,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.red,
       ),
-      home: LoginPage(title: 'EduForte - Login'),
+      home: LoginRoute(title: 'EduForte - Login'),
     );
   }
 }
