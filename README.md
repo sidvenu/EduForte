@@ -39,6 +39,8 @@ For elective courses and others. Under construction.
 ### class (classes)
 
 - classID: 8 char length string (ID)
+- departmentCode: String
+- section: String
 - courses: Array<courseCode>
 - classRepresentatives: Array<studentID>
 - students: Array<studentID>
@@ -47,7 +49,7 @@ For elective courses and others. Under construction.
 
 ### department (departments)
 
-- code: EEE, CSE etc. (ID)
+- departmentCode: EEE, CSE etc. (ID)
 - name: String
 
 ### student (students)
