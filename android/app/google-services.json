@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "153502862264",
+    "firebase_url": "https://eduforteindia.firebaseio.com",
+    "project_id": "eduforteindia",
+    "storage_bucket": "eduforteindia.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:153502862264:android:d83c409544e3af81b6dd4d",
+        "android_client_info": {
+          "package_name": "io.github.eduforte.eduforte"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "153502862264-egch8cksern9bgcjvgsscm5hvt52koje.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "io.github.eduforte.eduforte",
+            "certificate_hash": "6f044ba9ffae2175c9c2e2a6154a6dec2a30667a"
+          }
+        },
+        {
+          "client_id": "153502862264-1uf9bknprb3mf2uj6oetbi349kv3jcd6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAVPDa9qdAzQEcTijiGPRu4jMcw_rNPyCo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "153502862264-1uf9bknprb3mf2uj6oetbi349kv3jcd6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

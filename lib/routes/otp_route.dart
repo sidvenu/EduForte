@@ -114,16 +114,16 @@ class _OTPRouteState extends State<OTPRoute> {
         child: Container(
           decoration: BoxDecoration(
             // Box decoration takes a gradient
-            gradient: RadialGradient(
+            gradient: LinearGradient(
               // Where the linear gradient begins and ends
-              center: Alignment.topCenter,
-              radius: ratio,
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
               // Add one stop for each color. Stops should increase from 0 to 1
               stops: [0.1, 0.9],
               colors: [
                 // Colors are easy thanks to Flutter's Colors class.
-                Colors.red[700],
-                Colors.red[600],
+                Colors.teal[700],
+                Colors.teal[600],
               ],
             ),
           ),
@@ -135,7 +135,7 @@ class _OTPRouteState extends State<OTPRoute> {
                   autofocus: true,
                   onTextChanged: (String otp) => this.otp = otp,
                   pinBoxBorderWidth: 0.00000000000001,
-                  pinBoxColor: Colors.red[600],
+                  pinBoxColor: Colors.teal[600],
                   wrapAlignment: WrapAlignment.center,
                   pinTextStyle: TextStyle(
                     fontSize: 30,
