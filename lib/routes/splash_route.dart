@@ -12,7 +12,6 @@ class SplashRoute extends StatefulWidget {
 class _SplashRouteState extends State<SplashRoute> {
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Center(
       child: Text("LOL"),
     );

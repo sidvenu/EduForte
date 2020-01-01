@@ -13,7 +13,6 @@ class DashboardRoute extends StatefulWidget {
 class _DashboardRouteState extends State<DashboardRoute> {
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
