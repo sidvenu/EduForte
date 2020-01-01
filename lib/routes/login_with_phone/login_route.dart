@@ -1,12 +1,12 @@
-import 'package:eduforte/routes/otp_route.dart';
+import 'package:eduforte/routes/login_with_phone/otp_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
 
 class LoginRoute extends StatefulWidget {
-  final String title;
+  final String title = "EduForte - Login";
 
-  LoginRoute({Key key, this.title}) : super(key: key);
+  LoginRoute({Key key}) : super(key: key);
 
   @override
   _LoginRouteState createState() => _LoginRouteState();
@@ -50,21 +50,24 @@ class _LoginRouteState extends State<LoginRoute> {
     });
   }
 
-  void goToOTPPage(BuildContext context) {
+  void goToOTPPage() {
     Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (context) => OTPRoute(title: 'EduForte - Enter OTP')),
+        builder: (context) => OTPRoute(
+          title: 'EduForte - Enter OTP',
+          phoneNumber: '+91${phoneNumber.replaceAll(" ", "")}',
+        ),
+      ),
     );
   }
 
-  void onPressSendOTP(BuildContext context) {
+  void onPressSendOTP() {
     print(phoneNumber);
     if (phoneNumber.replaceAll(" ", "").length != 10) {
       setError("Please check your phone number again");
     } else {
-      // TODO: use firebase to send OTP and move to the next screen
-      goToOTPPage(context);
+      goToOTPPage();
     }
   }
 
@@ -103,7 +106,7 @@ class _LoginRouteState extends State<LoginRoute> {
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => onPressSendOTP(context),
+        onPressed: () => onPressSendOTP(),
         icon: Icon(Icons.message),
         label: Text("Send OTP"),
       ),

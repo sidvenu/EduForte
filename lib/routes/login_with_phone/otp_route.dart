@@ -1,12 +1,19 @@
+import 'dart:math';
+import 'dart:ui';
+
+import 'package:eduforte/routes/dashboard_route.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:pin_code_text_field/pin_code_text_field.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 
-class OTPRoute extends StatefulWidget {
-  final String title;
+final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  OTPRoute({Key key, this.title}) : super(key: key);
+class OTPRoute extends StatefulWidget {
+  final String title, phoneNumber;
+
+  OTPRoute({Key key, this.title, this.phoneNumber}) : super(key: key);
 
   @override
   _OTPRouteState createState() => new _OTPRouteState();
@@ -14,31 +21,79 @@ class OTPRoute extends StatefulWidget {
 
 class _OTPRouteState extends State<OTPRoute> {
   ProgressDialog automaticOTPVerificationProgress, checkEnteredOTPProgress;
-  String otp = '';
+  String otp = '', _verificationId;
 
-  void goBackToPreviousScreen(BuildContext context) {
+  void goBackToPreviousScreen() {
     Navigator.pop(context);
   }
 
-  void goToNextScreen(BuildContext context) {
+  void goToDashboardScreen() {
     print("Next screen");
-    // Navigator.push(
-    //   context,
-    //   MaterialPageRoute(
-    //       builder: (context) => OTPRoute(title: 'EduForte - Enter OTP')),
-    // );
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(
+        builder: (context) => DashboardRoute(),
+      ),
+      (Route<dynamic> route) => false,
+    );
   }
 
+  // Example code of how to verify phone number
   Future<bool> verifyOTPWithFirebase() async {
-    // TODO: check OTP with firebase using otp field
-    return Future.delayed(Duration(seconds: 4), () => false);
+    final AuthCredential credential = PhoneAuthProvider.getCredential(
+      verificationId: _verificationId,
+      smsCode: otp,
+    );
+    final FirebaseUser user =
+        (await _auth.signInWithCredential(credential)).user;
+    return user != null;
   }
 
-  Future<void> onSubmitOTP(BuildContext context) async {
-    automaticOTPVerificationProgress.dismiss();
+  void automaticOTPCheck() async {
+    print('${widget.phoneNumber}');
+    final PhoneVerificationCompleted verificationCompleted =
+        (AuthCredential phoneAuthCredential) {
+      automaticOTPVerificationProgress.dismiss();
+      _auth.signInWithCredential(phoneAuthCredential);
+      goToDashboardScreen();
+    };
+
+    final PhoneVerificationFailed verificationFailed =
+        (AuthException authException) {
+      automaticOTPVerificationProgress.dismiss();
+      checkEnteredOTPProgress.dismiss();
+      print("Phone Verification Failed");
+      print(authException.message);
+    };
+
+    final PhoneCodeSent codeSent =
+        (String verificationId, [int forceResendingToken]) async {
+      _verificationId = verificationId;
+      print("$verificationId");
+    };
+
+    final PhoneCodeAutoRetrievalTimeout codeAutoRetrievalTimeout =
+        (String verificationId) {
+      _verificationId = verificationId;
+      automaticOTPVerificationProgress.dismiss();
+    };
+
+    await _auth.verifyPhoneNumber(
+      phoneNumber: widget.phoneNumber,
+      timeout: const Duration(seconds: 5),
+      verificationCompleted: verificationCompleted,
+      verificationFailed: verificationFailed,
+      codeSent: codeSent,
+      codeAutoRetrievalTimeout: codeAutoRetrievalTimeout,
+    );
+  }
+
+  void onSubmitOTP() async {
+    checkEnteredOTPProgress.show();
     bool isOTPCorrect = await verifyOTPWithFirebase();
+    checkEnteredOTPProgress.dismiss();
     if (isOTPCorrect) {
-      goToNextScreen(context);
+      goToDashboardScreen();
     } else {
       showDialog(
         context: context,
@@ -63,6 +118,15 @@ class _OTPRouteState extends State<OTPRoute> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      automaticOTPVerificationProgress.show();
+      automaticOTPCheck();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     automaticOTPVerificationProgress =
         ProgressDialog(context, isDismissible: false);
@@ -75,15 +139,9 @@ class _OTPRouteState extends State<OTPRoute> {
       message: "Verifying OTP",
     );
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      // automaticOTPVerificationProgress.show();
-      // TODO: after firebase autoverify has completed
-      // automaticOTPVerificationProgress.dismiss();
-    });
-
     FloatingActionButton previousScreenButton = FloatingActionButton.extended(
       heroTag: "previousScreenButton",
-      onPressed: () => goBackToPreviousScreen(context),
+      onPressed: () => goBackToPreviousScreen(),
       icon: Icon(
         Icons.navigate_before,
         color: Colors.black,
@@ -95,7 +153,7 @@ class _OTPRouteState extends State<OTPRoute> {
 
     FloatingActionButton nextScreenButton = FloatingActionButton.extended(
       heroTag: "nextScreenButton",
-      onPressed: () => onSubmitOTP(context),
+      onPressed: () => onSubmitOTP(),
       icon: Icon(
         Icons.navigate_next,
         color: Colors.black,
@@ -106,8 +164,8 @@ class _OTPRouteState extends State<OTPRoute> {
     );
 
     Size size = MediaQuery.of(context).size;
-    double ratio = size.height / size.width;
-    if (ratio < 1) ratio = 1 / ratio;
+    double minDimension = min(size.height, size.width);
+    double pinBoxDimension = min(minDimension / 6 - 15, 70);
 
     return Scaffold(
       body: Center(
@@ -133,6 +191,12 @@ class _OTPRouteState extends State<OTPRoute> {
               Container(
                 child: PinCodeTextField(
                   autofocus: true,
+                  maxLength: 6,
+                  pinBoxHeight: pinBoxDimension,
+                  pinBoxWidth: pinBoxDimension,
+                  onDone: (String otp) {
+                    onSubmitOTP();
+                  },
                   onTextChanged: (String otp) => this.otp = otp,
                   pinBoxBorderWidth: 0.00000000000001,
                   pinBoxColor: Colors.teal[600],
