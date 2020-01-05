@@ -18,13 +18,13 @@
 
 - classroomID
 - day: [monday - sunday]
-- courses: Array<{startsAt: "HH:MM", courseCode}>
+- courses: Array<{startsAt: "HH:MM", endsAt: "HH:MM", courseCode}>
 
 ### Date-specific Time Table (dateSpecificTimeTables)
 
 - classroomID
 - date: "YYYY-MM-DD"
-- courses: Array<{startsAt: "HH:MM", courseCode}>
+- courses: Array<{startsAt: "HH:MM", endsAt: "HH:MM", courseCode}>
 
 ### course (courses)
 
