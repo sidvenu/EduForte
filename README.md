@@ -16,13 +16,13 @@
 
 ### General Time Table (generalTimeTables)
 
-- classID
+- classroomID
 - day: [monday - sunday]
 - courses: Array<{startsAt: "HH:MM", courseCode}>
 
 ### Date-specific Time Table (dateSpecificTimeTables)
 
-- classID
+- classroomID
 - date: "YYYY-MM-DD"
 - courses: Array<{startsAt: "HH:MM", courseCode}>
 
@@ -30,20 +30,21 @@
 
 For elective courses and others. Under construction.
 
-### classCourse (classCourses)
+### classroomCourse (classroomCourses)
 
 - courseCode: String - like MAIR12
 - courseName
 
-### class (classes)
+### classroom (classroomes)
 
-- classID: 8 char length string (ID)
+- classroomID: 8 char length string (ID)
 - departmentCode: String
 - section: String
 - courses: Array<courseCode>
-- classRepresentatives: Array<studentID>
+- classroomRepresentatives: Array<studentID>
 - students: Array<studentID>
 - oddOrEvenSemester: "odd"|"even"
+- batchYear
 - year
 
 ### department (departments)
