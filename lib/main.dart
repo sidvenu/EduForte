@@ -1,3 +1,4 @@
+import 'package:eduforte/data_classes/student.dart';
 import 'package:eduforte/helpers/firebase_helper.dart';
 import 'package:eduforte/routes/dashboard_route.dart';
 import 'package:eduforte/routes/login_with_phone/create_profile_route.dart';
@@ -21,12 +22,17 @@ class _MyAppState extends State<MyApp> {
   void checkIfUserIsAlreadyLoggedIn() async {
     if (await FirebaseHelper.isUserLoggedIn()) {
       phoneNumber = await FirebaseHelper.getUserPhoneString();
-      if (await FirebaseHelper.doesProfileExist(
-        phoneNumber: phoneNumber,
-      )) {
-        routeNameToShow = "dashboard";
-      } else {
+      final profileMap =
+          await FirebaseHelper.getProfile(phoneNumber: phoneNumber);
+      if (profileMap == null) {
         routeNameToShow = "create_profile";
+      } else {
+        Student student = Student.fromMap(profileMap);
+        if (student.classroomID == null) {
+          routeNameToShow = "join_classroom";
+        } else {
+          routeNameToShow = "dashboard";
+        }
       }
     } else {
       routeNameToShow = "login";
