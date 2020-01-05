@@ -34,7 +34,6 @@ For elective courses and others. Under construction.
 
 - courseCode: String - like MAIR12
 - courseName
-- classID
 
 ### class (classes)
 
