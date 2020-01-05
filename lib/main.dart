@@ -1,12 +1,11 @@
+import 'package:eduforte/helpers/firebase_helper.dart';
 import 'package:eduforte/routes/dashboard_route.dart';
+import 'package:eduforte/routes/login_with_phone/create_profile_route.dart';
 import 'package:eduforte/routes/login_with_phone/login_route.dart';
 import 'package:eduforte/routes/splash_route.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 void main() => runApp(MyApp());
-
-final FirebaseAuth _auth = FirebaseAuth.instance;
 
 class MyApp extends StatefulWidget {
   MyApp({Key key}) : super(key: key);
@@ -17,16 +16,22 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   String routeNameToShow = "splash";
+  String phoneNumber;
 
   void checkIfUserIsAlreadyLoggedIn() async {
-    FirebaseUser user = await _auth.currentUser();
-    setState(() {
-      if (user == null) {
-        routeNameToShow = "login";
-      } else {
+    if (await FirebaseHelper.isUserLoggedIn()) {
+      phoneNumber = await FirebaseHelper.getUserPhoneString();
+      if (await FirebaseHelper.doesProfileExist(
+        phoneNumber: phoneNumber,
+      )) {
         routeNameToShow = "dashboard";
+      } else {
+        routeNameToShow = "create_profile";
       }
-    });
+    } else {
+      routeNameToShow = "login";
+    }
+    setState(() {});
   }
 
   @override
@@ -46,6 +51,11 @@ class _MyAppState extends State<MyApp> {
         break;
       case "login":
         routeToShow = LoginRoute();
+        break;
+      case "create_profile":
+        routeToShow = CreateProfileRoute(
+          phoneNumber: phoneNumber,
+        );
         break;
       case "dashboard":
         routeToShow = DashboardRoute();

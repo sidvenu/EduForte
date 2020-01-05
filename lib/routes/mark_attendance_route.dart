@@ -1,26 +1,16 @@
-import 'package:eduforte/routes/mark_attendance_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
-class DashboardRoute extends StatefulWidget {
-  final String title = 'Your EduForte Dashboard';
+class MarkAttendanceRoute extends StatefulWidget {
+  final String title = 'Mark Attendance';
 
-  DashboardRoute({Key key}) : super(key: key);
+  MarkAttendanceRoute({Key key}) : super(key: key);
 
   @override
-  _DashboardRouteState createState() => _DashboardRouteState();
+  _MarkAttendanceRouteState createState() => _MarkAttendanceRouteState();
 }
 
-class _DashboardRouteState extends State<DashboardRoute> {
-  void goToMarkAttendanceScreen() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => MarkAttendanceRoute(),
-      ),
-    );
-  }
-
+class _MarkAttendanceRouteState extends State<MarkAttendanceRoute> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,7 +26,7 @@ class _DashboardRouteState extends State<DashboardRoute> {
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: goToMarkAttendanceScreen,
+        onPressed: () => {},
         icon: Icon(Icons.add),
         label: Text("Mark Attendance"),
       ),

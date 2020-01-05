@@ -55,7 +55,6 @@ class _LoginRouteState extends State<LoginRoute> {
       context,
       MaterialPageRoute(
         builder: (context) => OTPRoute(
-          title: 'EduForte - Enter OTP',
           phoneNumber: '+91${phoneNumber.replaceAll(" ", "")}',
         ),
       ),

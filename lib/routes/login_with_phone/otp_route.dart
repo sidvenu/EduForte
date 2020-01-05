@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'dart:ui';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eduforte/routes/dashboard_route.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -8,12 +9,14 @@ import 'package:flutter/widgets.dart';
 import 'package:pin_code_text_field/pin_code_text_field.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 
+import 'create_profile_route.dart';
+
 final FirebaseAuth _auth = FirebaseAuth.instance;
 
 class OTPRoute extends StatefulWidget {
-  final String title, phoneNumber;
+  final String phoneNumber;
 
-  OTPRoute({Key key, this.title, this.phoneNumber}) : super(key: key);
+  OTPRoute({Key key, this.phoneNumber}) : super(key: key);
 
   @override
   _OTPRouteState createState() => new _OTPRouteState();
@@ -27,8 +30,7 @@ class _OTPRouteState extends State<OTPRoute> {
     Navigator.pop(context);
   }
 
-  void goToDashboardScreen() {
-    print("Next screen");
+  void goToDashboardRoute() {
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(
@@ -36,6 +38,31 @@ class _OTPRouteState extends State<OTPRoute> {
       ),
       (Route<dynamic> route) => false,
     );
+  }
+
+  void goToCreateProfileRoute() {
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(
+        builder: (context) => CreateProfileRoute(
+          phoneNumber: widget.phoneNumber,
+        ),
+      ),
+      (Route<dynamic> route) => false,
+    );
+  }
+
+  void loginCompleteAction() async {
+    print("loginCompleteAction");
+    QuerySnapshot snapshot = await Firestore.instance
+        .collection('students')
+        .where('phoneNumber', isEqualTo: widget.phoneNumber)
+        .getDocuments();
+    if (snapshot.documents.length == 0) {
+      goToCreateProfileRoute();
+    } else {
+      goToDashboardRoute();
+    }
   }
 
   // Example code of how to verify phone number
@@ -55,7 +82,7 @@ class _OTPRouteState extends State<OTPRoute> {
         (AuthCredential phoneAuthCredential) {
       automaticOTPVerificationProgress.dismiss();
       _auth.signInWithCredential(phoneAuthCredential);
-      goToDashboardScreen();
+      loginCompleteAction();
     };
 
     final PhoneVerificationFailed verificationFailed =
@@ -93,7 +120,7 @@ class _OTPRouteState extends State<OTPRoute> {
     bool isOTPCorrect = await verifyOTPWithFirebase();
     checkEnteredOTPProgress.dismiss();
     if (isOTPCorrect) {
-      goToDashboardScreen();
+      loginCompleteAction();
     } else {
       showDialog(
         context: context,
