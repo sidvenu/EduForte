@@ -1,6 +1,3 @@
-import 'dart:convert';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eduforte/data_classes/course_timing.dart';
 import 'package:eduforte/helpers/date_helper.dart';
 import 'package:eduforte/helpers/firebase_helper.dart';

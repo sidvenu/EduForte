@@ -8,13 +8,23 @@ import 'package:jiffy/jiffy.dart';
 class FirebaseHelper {
   static final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  static Future<Map<String, dynamic>> getProfile(
-      {@required String phoneNumber}) async {
+  static Future<DocumentSnapshot> getStudentProfileDocument(
+      {String phoneNumber}) async {
+    if (phoneNumber == null) {
+      phoneNumber = await FirebaseHelper.getUserPhoneString();
+    }
     QuerySnapshot snapshot = await Firestore.instance
         .collection('students')
         .where('phoneNumber', isEqualTo: phoneNumber)
         .getDocuments();
-    return snapshot.documents.length != 0 ? snapshot.documents[0].data : null;
+    return snapshot.documents.length != 0 ? snapshot.documents[0] : null;
+  }
+
+  static Future<Map<String, dynamic>> getStudentProfile(
+      {String phoneNumber}) async {
+    DocumentSnapshot studentProfileDocument =
+        await getStudentProfileDocument(phoneNumber: phoneNumber);
+    return studentProfileDocument?.data;
   }
 
   static Future<String> getUserPhoneString() async {
