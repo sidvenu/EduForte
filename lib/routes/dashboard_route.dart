@@ -1,3 +1,5 @@
+import 'package:eduforte/helpers/firebase_helper.dart';
+import 'package:eduforte/routes/edit_timetable_route.dart';
 import 'package:eduforte/routes/mark_attendance_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -12,6 +14,8 @@ class DashboardRoute extends StatefulWidget {
 }
 
 class _DashboardRouteState extends State<DashboardRoute> {
+  bool isEditTimeTableButtonVisible = false;
+
   void goToMarkAttendanceScreen() {
     Navigator.push(
       context,
@@ -21,8 +25,44 @@ class _DashboardRouteState extends State<DashboardRoute> {
     );
   }
 
+  void goToEditTimeTableScreen() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => EditTimeTableRoute(),
+      ),
+    );
+  }
+
+  void checkIfUserIsACR() async {
+    isEditTimeTableButtonVisible = await FirebaseHelper.isStudentACR();
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      checkIfUserIsACR();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    FloatingActionButton markAttendanceButton = FloatingActionButton.extended(
+      heroTag: "markAttendanceButton",
+      onPressed: goToMarkAttendanceScreen,
+      icon: Icon(Icons.add),
+      label: Text("Mark Attendance"),
+    );
+
+    FloatingActionButton editTimeTableButton = FloatingActionButton.extended(
+      heroTag: "editTimeTableButton",
+      onPressed: goToEditTimeTableScreen,
+      icon: Icon(Icons.edit),
+      label: Text("Edit Timetable"),
+    );
+
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
@@ -35,10 +75,21 @@ class _DashboardRouteState extends State<DashboardRoute> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: goToMarkAttendanceScreen,
-        icon: Icon(Icons.add),
-        label: Text("Mark Attendance"),
+      floatingActionButton: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Visibility(
+            child: editTimeTableButton,
+            visible: isEditTimeTableButtonVisible,
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          Container(
+            child: markAttendanceButton,
+          ),
+        ],
       ),
     );
   }

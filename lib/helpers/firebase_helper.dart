@@ -42,6 +42,12 @@ class FirebaseHelper {
     final dateSpecificTimeTablesQuery = await Firestore.instance
         .collection("dateSpecificTimeTables")
         .where("date", isEqualTo: date)
+        .where(
+          "classroomID",
+          isEqualTo: (await getStudentProfile(
+            phoneNumber: await getUserPhoneString(),
+          ))["classroomID"],
+        )
         .getDocuments();
 
     if (dateSpecificTimeTablesQuery.documents.length == 0) {
@@ -112,5 +118,41 @@ class FirebaseHelper {
       "date": date,
       "courseTimings": CourseTiming.toListMap(attendedCourseTimings),
     });
+  }
+
+  static Future<void> setTimetable(
+      {String date, List<CourseTiming> courseTimings}) async {
+    Map<String, dynamic> studentProfile =
+        await getStudentProfile(phoneNumber: await getUserPhoneString());
+
+    final attendancesQuery = await Firestore.instance
+        .collection("dateSpecificTimeTables")
+        .where("date", isEqualTo: date)
+        .where("classroomID", isEqualTo: studentProfile["classroomID"])
+        .getDocuments();
+    String documentID;
+    if (attendancesQuery.documents.length != 0) {
+      documentID = attendancesQuery.documents[0].documentID;
+    }
+    await Firestore.instance
+        .collection("dateSpecificTimeTables")
+        .document(documentID)
+        .setData(<String, dynamic>{
+      "classroomID": studentProfile["classroomID"],
+      "date": date,
+      "courseTimings": CourseTiming.toListMap(courseTimings),
+    });
+  }
+
+  static Future<bool> isStudentACR() async {
+    Map<String, dynamic> userProfile =
+        await getStudentProfile(phoneNumber: await getUserPhoneString());
+    Map<String, dynamic> classroomData = (await Firestore.instance
+            .collection("classrooms")
+            .document(userProfile["classroomID"])
+            .get())
+        .data;
+    return classroomData["classroomRepresentatives"]
+        .contains(userProfile["studentID"]);
   }
 }

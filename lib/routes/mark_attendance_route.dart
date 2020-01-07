@@ -216,7 +216,12 @@ class _MarkAttendanceRouteState extends State<MarkAttendanceRoute> {
               child: Container(
                 height: windowSize.height * 0.75,
                 child: ListView(
-                  children: getCourseTimingsWidgets(),
+                  children: [
+                    ...getCourseTimingsWidgets(),
+                    SizedBox(
+                      height: 100,
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -225,8 +230,9 @@ class _MarkAttendanceRouteState extends State<MarkAttendanceRoute> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: saveButtonEnabled ? publishAttendedCourseTimings : null,
-        backgroundColor:
-            saveButtonEnabled ? Theme.of(context).primaryColor : Colors.grey[600],
+        backgroundColor: saveButtonEnabled
+            ? Theme.of(context).primaryColor
+            : Colors.grey[600],
         icon: Icon(Icons.save),
         label: Text("Save"),
       ),
