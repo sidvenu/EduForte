@@ -20,7 +20,7 @@ class _EditTimeTableRouteState extends State<EditTimeTableRoute> {
   String date = Jiffy().format(DateHelper.dateFormat);
   List<CourseTiming> courseTimings = List();
   Map<String, dynamic> courseNames = Map();
-  bool saveButtonEnabled = false;
+  bool saveButtonEnabled = true;
 
   CourseTiming newCourseTiming = CourseTiming();
   TextEditingController startTimeController = TextEditingController(),
@@ -276,7 +276,7 @@ class _EditTimeTableRouteState extends State<EditTimeTableRoute> {
           firstDate: DateTime(2000),
           lastDate: DateTime(2050)),
     ).format(DateHelper.dateFormat);
-    saveButtonEnabled = false;
+    saveButtonEnabled = true;
     setState(() {});
     fetchCourseTimingsAndAttendance();
   }

@@ -207,8 +207,8 @@ class _OTPRouteState extends State<OTPRoute> {
               stops: [0.1, 0.9],
               colors: [
                 // Colors are easy thanks to Flutter's Colors class.
-                Colors.teal[700],
-                Colors.teal[600],
+                Colors.deepPurple[700],
+                Colors.deepPurple[600],
               ],
             ),
           ),
