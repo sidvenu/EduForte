@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eduforte/data_classes/course_timing.dart';
 import 'package:eduforte/helpers/date_helper.dart';
 import 'package:eduforte/helpers/firebase_helper.dart';
@@ -18,33 +19,83 @@ class MarkAttendanceRoute extends StatefulWidget {
 class _MarkAttendanceRouteState extends State<MarkAttendanceRoute> {
   String date = Jiffy().format(DateHelper.dateFormat);
   Map<CourseTiming, bool> courseTimingsAttendanceMap = Map();
+  Map<String, dynamic> courseNames = Map();
+  bool saveButtonEnabled = false;
 
-  void fetchClassTimings() async {
+  Future<void> fetchCourseNames() async {
+    final querySnapshot =
+        await Firestore.instance.collection("classCourses").getDocuments();
+    for (DocumentSnapshot snapshot in querySnapshot.documents) {
+      courseNames[snapshot.documentID] = snapshot.data["courseName"];
+    }
+  }
+
+  List<CourseTiming> getAttendedCourses() {
+    final attendedCourses = <CourseTiming>[];
+    courseTimingsAttendanceMap
+        .forEach((CourseTiming courseTiming, bool attended) {
+      if (attended) {
+        attendedCourses.add(courseTiming);
+      }
+    });
+    return attendedCourses;
+  }
+
+  void fetchCourseTimingsAndAttendance() async {
     ProgressDialog progress = ProgressDialog(context);
     progress.style(message: "Getting attendances");
 
     progress.show();
 
+    await fetchCourseNames();
+
     List<CourseTiming> courseTimings =
         await FirebaseHelper.getCourseTimings(date: date);
 
+    List<CourseTiming> attendance =
+        await FirebaseHelper.getAttendance(date: date);
+
     courseTimingsAttendanceMap.clear();
-    courseTimings.forEach(
-        (courseTiming) => courseTimingsAttendanceMap[courseTiming] = false);
+    courseTimings.forEach((courseTiming) {
+      bool attended = false;
+      attendance.forEach((attendedCourseTiming) {
+        if (courseTiming == attendedCourseTiming) {
+          attended = true;
+        }
+      });
+      courseTimingsAttendanceMap[courseTiming] = attended;
+    });
 
     setState(() {});
     for (CourseTiming t in courseTimingsAttendanceMap.keys) {
       print('${t.courseCode} starts at ${t.startsAt} and ends at ${t.endsAt}');
     }
+    for (CourseTiming t in attendance) {
+      print(
+          '\$\$\$sd${t.courseCode} starts at ${t.startsAt} and ends at ${t.endsAt}');
+    }
 
     progress.dismiss();
+  }
+
+  void publishAttendedCourseTimings() async {
+    ProgressDialog progress = ProgressDialog(context);
+    progress.style(message: "Publishing your attendance");
+
+    progress.show();
+    await FirebaseHelper.setAttendance(
+        date: date, attendedCourseTimings: getAttendedCourses());
+    progress.dismiss();
+    setState(() {
+      saveButtonEnabled = false;
+    });
   }
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      fetchClassTimings();
+      fetchCourseTimingsAndAttendance();
     });
   }
 
@@ -56,19 +107,20 @@ class _MarkAttendanceRouteState extends State<MarkAttendanceRoute> {
         InkWell(
           onTap: () {
             courseTimingsAttendanceMap[courseTiming] = !attended;
+            saveButtonEnabled = true;
             setState(() {});
           },
           child: Card(
             child: Container(
               padding: EdgeInsets.all(20),
-              height: 120,
+              height: 150,
               child: Stack(
                 children: <Widget>[
                   Align(
                     alignment: Alignment.topLeft,
                     child: Text(
-                      courseTiming.courseCode,
-                      style: TextStyle(fontSize: 40),
+                      courseNames[courseTiming.courseCode],
+                      style: TextStyle(fontSize: 25),
                     ),
                   ),
                   Align(
@@ -103,8 +155,9 @@ class _MarkAttendanceRouteState extends State<MarkAttendanceRoute> {
           firstDate: DateTime(2000),
           lastDate: DateTime(2050)),
     ).format(DateHelper.dateFormat);
+    saveButtonEnabled = false;
     setState(() {});
-    fetchClassTimings();
+    fetchCourseTimingsAndAttendance();
   }
 
   @override
@@ -121,10 +174,10 @@ class _MarkAttendanceRouteState extends State<MarkAttendanceRoute> {
             Align(
               alignment: Alignment.topCenter,
               child: Container(
-                width: windowSize.width * 0.45,
+                width: windowSize.width * 0.42,
                 height: 60,
                 child: RaisedButton(
-                  color: Colors.deepPurple,
+                  color: Theme.of(context).primaryColor,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
@@ -171,7 +224,9 @@ class _MarkAttendanceRouteState extends State<MarkAttendanceRoute> {
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => {},
+        onPressed: saveButtonEnabled ? publishAttendedCourseTimings : null,
+        backgroundColor:
+            saveButtonEnabled ? Theme.of(context).primaryColor : Colors.grey[600],
         icon: Icon(Icons.save),
         label: Text("Save"),
       ),

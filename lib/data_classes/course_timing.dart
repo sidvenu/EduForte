@@ -10,4 +10,22 @@ class CourseTiming {
   static List<CourseTiming> fromDynamicList(List<dynamic> list) {
     return list.map((element) => CourseTiming.fromMap(element)).toList();
   }
+
+  Map<String, String> toMap() {
+    return {
+      "courseCode": courseCode,
+      "startsAt": startsAt,
+      "endsAt": endsAt,
+    };
+  }
+
+  static List<Map<String, String>> toListMap(List<CourseTiming> list) {
+    return list.map((element) => element.toMap()).toList();
+  }
+
+  bool operator ==(dynamic other) {
+    return (other.courseCode == courseCode &&
+        other.startsAt == startsAt &&
+        other.endsAt == endsAt);
+  }
 }

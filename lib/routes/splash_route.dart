@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 class SplashRoute extends StatefulWidget {
-
   SplashRoute({Key key}) : super(key: key);
 
   @override
@@ -12,8 +11,14 @@ class SplashRoute extends StatefulWidget {
 class _SplashRouteState extends State<SplashRoute> {
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Text("LOL"),
+    return Container(
+      child: Center(
+        child: FlutterLogo(
+          colors: Colors.deepOrange,
+          size: 75,
+        ),
+      ),
+      color: Colors.white,
     );
   }
 }
