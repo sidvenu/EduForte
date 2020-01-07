@@ -74,7 +74,7 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       title: 'EduForte',
       theme: ThemeData(
-        primarySwatch: Colors.deepOrange,
+        primarySwatch: Colors.deepPurple,
       ),
       home: routeToShow,
     );
