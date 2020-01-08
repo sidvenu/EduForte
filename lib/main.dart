@@ -64,7 +64,7 @@ class _MyAppState extends State<MyApp> {
         );
         break;
       case "join_classroom":
-        routeToShow = JoinClassroom();
+        routeToShow = JoinClassroomRoute();
         break;
       case "dashboard":
         routeToShow = DashboardRoute();

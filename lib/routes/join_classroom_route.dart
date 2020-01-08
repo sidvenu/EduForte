@@ -1,18 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:eduforte/data_classes/classroom.dart';
 import 'package:eduforte/helpers/firebase_helper.dart';
 import 'package:eduforte/routes/dashboard_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 
-class JoinClassroom extends StatefulWidget {
+class JoinClassroomRoute extends StatefulWidget {
   final String title = 'Join an EduForte Classroom';
   @override
-  _JoinClassroomState createState() => _JoinClassroomState();
+  _JoinClassroomRouteState createState() => _JoinClassroomRouteState();
 }
 
-class _JoinClassroomState extends State<JoinClassroom> {
+class _JoinClassroomRouteState extends State<JoinClassroomRoute> {
   String classroomID = "";
   String error;
   void joinClassroom() async {

@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eduforte/routes/dashboard_route.dart';
+import 'package:eduforte/routes/join_classroom_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:progress_dialog/progress_dialog.dart';
@@ -33,11 +34,11 @@ class _CreateProfileRouteState extends State<CreateProfileRoute> {
     progressMessageDialog.show();
   }
 
-  void goToDashboardRoute() {
+  void goToJoinClassroomRoute() {
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(
-        builder: (context) => DashboardRoute(),
+        builder: (context) => JoinClassroomRoute(),
       ),
       (Route<dynamic> route) => false,
     );
@@ -75,7 +76,7 @@ class _CreateProfileRouteState extends State<CreateProfileRoute> {
     showProgressMessage("Creating your EduForte profile...");
     await createProfile();
     Navigator.pop(context);
-    goToDashboardRoute();
+    goToJoinClassroomRoute();
   }
 
   void createProfileButtonClick() {
