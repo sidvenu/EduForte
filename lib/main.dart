@@ -22,9 +22,9 @@ class _MyAppState extends State<MyApp> {
 
   void checkIfUserIsAlreadyLoggedIn() async {
     if (await FirebaseHelper.isUserLoggedIn()) {
-      final profileMap =
-          await FirebaseHelper.getStudentProfile();
+      final profileMap = await FirebaseHelper.getStudentProfile();
       if (profileMap == null) {
+        phoneNumber = await FirebaseHelper.getUserPhoneString();
         routeNameToShow = "create_profile";
       } else {
         Student student = Student.fromMap(profileMap);

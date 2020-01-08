@@ -28,8 +28,8 @@ class FirebaseHelper {
 
   static Future<String> getUserPhoneString() async {
     FirebaseUser user = await _auth.currentUser();
-    print('phone ${user.phoneNumber}');
-    return user.phoneNumber;
+    print('phone ${user?.phoneNumber}');
+    return user?.phoneNumber;
   }
 
   static Future<bool> isUserLoggedIn() async {
@@ -38,15 +38,15 @@ class FirebaseHelper {
 
   static Future<List<CourseTiming>> getCourseTimings({String date = ""}) async {
     List<CourseTiming> courseTimings = List();
-
+    String classroomID = (await getStudentProfile(
+      phoneNumber: await getUserPhoneString(),
+    ))["classroomID"];
     final dateSpecificTimeTablesQuery = await Firestore.instance
         .collection("dateSpecificTimeTables")
         .where("date", isEqualTo: date)
         .where(
           "classroomID",
-          isEqualTo: (await getStudentProfile(
-            phoneNumber: await getUserPhoneString(),
-          ))["classroomID"],
+          isEqualTo: classroomID,
         )
         .getDocuments();
 
@@ -61,6 +61,10 @@ class FirebaseHelper {
                 DateHelper.dateFormat,
               ),
             ),
+          )
+          .where(
+            "classroomID",
+            isEqualTo: classroomID,
           )
           .getDocuments();
 
