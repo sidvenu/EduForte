@@ -226,7 +226,7 @@ class _OTPRouteState extends State<OTPRoute> {
                   },
                   onTextChanged: (String otp) => this.otp = otp,
                   pinBoxBorderWidth: 0.00000000000001,
-                  pinBoxColor: Colors.teal[600],
+                  pinBoxColor: Colors.deepPurple[600],
                   wrapAlignment: WrapAlignment.center,
                   pinTextStyle: TextStyle(
                     fontSize: 30,
